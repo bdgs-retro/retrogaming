@@ -141,6 +141,25 @@
                 console.log(`Loading ROM from URL: roms/${urlParams.get("rom")}`);
                 run(false, urlParams.get("rom"));
             }
+     
+            
+            async function loadROM(romName) {
+                const response = await fetch(`./roms/${romName}`);
+                if (!response.ok) throw new Error("ROM not found");
+                const arrayBuffer = await response.arrayBuffer();
+                return new Uint8Array(arrayBuffer);
+             }
+
+            async function startGame(romName) {
+                 const romData = await loadROM(romName);
+                 const emulator = new EmuJS.GameBoy(); // or GameBoyColor
+                emulator.loadROM(romData);
+                emulator.start();
+                const canvas = document.getElementById('screen');
+                emulator.setCanvas(canvas);
+            }
+
+            
 
             async function run(upload, file) {
                 const url = upload ? input.files[0] : `roms/${file}`;
